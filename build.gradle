@@ -8,7 +8,7 @@ group = 'com.project'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '1.8'
 }
 
 repositories {
@@ -25,9 +25,12 @@ dependencies {
 }
 
 springBoot {
-	mainClass = "com.project.JudgeItApplication"
+	mainClass = "com.project.Judge_It.JudgeItApplication"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+apply plugin: 'org.springframework.boot'
+

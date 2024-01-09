@@ -1,7 +1,10 @@
 package com.project.Judge_It.service;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.project.Judge_It.model.*;
 import com.project.Judge_It.repository.*;
@@ -24,8 +27,13 @@ public class UserService implements UserDetailsService {
         // You may need to adapt this based on your User and UserDetails implementation
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
-                .password(user.getPassword())
+                .password(passwordEncoder().encode(user.getPassword()))
                 .roles("USER")
                 .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
