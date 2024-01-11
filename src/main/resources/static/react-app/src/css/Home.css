@@ -1,0 +1,40 @@
+/* src/pages/Home.css */
+body.home-body {
+  /* Your specific styles for the body element in the Home component */
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+}
+
+nav {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#home-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex; /* Add display:flex to home-container if needed */
+  flex-direction: column; /* Adjust flex properties as needed */
+  /* Add any additional styles as needed */
+}
+
+.content {
+  padding: 20px;
+  text-align: center;
+}
+
+.content h2 {
+  color: #007bff;
+}
+
+.content p {
+  color: #333;
+  font-size: 1.2rem;
+}

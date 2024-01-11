@@ -26,10 +26,12 @@
 // src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import './App.css';
-import Login from './components/Login';
-import Register from './components/Register';
-import Home from './components/Home';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';
+import './css/App.css';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Home from './pages/Home';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
