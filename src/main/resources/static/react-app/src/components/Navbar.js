@@ -1,76 +1,17 @@
-// // src/components/Navbar.js
-// import React, { useState, useEffect, useRef } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import '../css/Navbar.css';
-
-// const Navbar = () => {
-//   const [dropdownVisible, setDropdownVisible] = useState(false);
-//   const dropdownRef = useRef(null);
-//   const navigate = useNavigate();
-//   const [loggedIn, setLoggedIn] = useState(false);
-
-//   const toggleDropdown = () => {
-//     setDropdownVisible(!dropdownVisible);
-//   };
-
-//   const closeDropdown = (event) => {
-//     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//       setDropdownVisible(false);
-//     }
-//   };
-
-//   const handleLogout = () => {
-//     // Perform logout actions here
-//     // For example, clear user authentication tokens or state
-//     // ...
-
-//     // Redirect to the login page after logout
-//     console.log("HERE");
-//     setLoggedIn(false);
-//     navigate('/login');
-//   };
-
-//   useEffect(() => {
-//     document.addEventListener('click', closeDropdown);
-
-//     return () => {
-//       document.removeEventListener('click', closeDropdown);
-//     };
-//   }, []);
-
-//   return (
-//     <nav className="navbar">
-//       <div className="navbar-title">Judge It</div>
-
-//       <div className="navbar-dropdown" ref={dropdownRef}>
-//         <button className="dropdown-button" onClick={toggleDropdown}>
-//           ☰
-//         </button>
-
-//         {dropdownVisible && (
-//           <div className="dropdown-content">
-//             <Link to="/myaccount">My Account</Link>
-//             <button onClick={handleLogout}>Logout</button>
-
-//           </div>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
 // src/components/CustomNavbar.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import '../css/Navbar.css';
 
-const MyNavbar = () => {
-      const navigate = useNavigate();
+const MyNavbar = ({ user }) => {
+
+  const firstName = useSelector((state) => state.user.firstName);
+  const lastName = useSelector((state) => state.user.lastName);  //Grabs the firstname from the user state object set on login.
+  const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
 
       const handleLogout = () => {
@@ -92,21 +33,25 @@ const MyNavbar = () => {
           <Nav.Link href="#">Home</Nav.Link>
           <Nav.Link href="#">Features</Nav.Link>
           <Nav.Link href="#">Pricing</Nav.Link>
-          <NavDropdown title="Dropdown" id="navbarDropdownMenuLink-333">
-            <NavDropdown.Item href="#">Action</NavDropdown.Item>
-            <NavDropdown.Item href="#">Another action</NavDropdown.Item>
-            <NavDropdown.Item href="#">Something else here</NavDropdown.Item>
+          <NavDropdown title="My Shows" id="navbarDropdownMenuLink-333">
+            <NavDropdown.Item href="#">Create A Show</NavDropdown.Item>
+            <NavDropdown.Item href="#">My Shows</NavDropdown.Item>
           </NavDropdown>
         </Nav>
         <Nav className="nav-flex-icons user-icon-dropdown">
           <NavDropdown
-            title={<FontAwesomeIcon icon={faUser} />}
+            title={
+                <>
+                <span className="user-name">{firstName + " " + lastName || 'Guest'}</span>
+                    {<FontAwesomeIcon icon={faUser} />}
+                </>
+                }
             id="navbarDropdownMenuLink-333"
             drop="down"
           >
-            <NavDropdown.Item href="#">Action</NavDropdown.Item>
-            <NavDropdown.Item href="#">Another action</NavDropdown.Item>
-            <NavDropdown.Item href="#">Something else here</NavDropdown.Item>
+            <NavDropdown.Item href="#">My Shows</NavDropdown.Item>
+            <NavDropdown.Item href="#">My Account</NavDropdown.Item>
+            <NavDropdown.Item href="#">Logout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
@@ -114,4 +59,8 @@ const MyNavbar = () => {
   );
 };
 
-export default MyNavbar;
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(MyNavbar);

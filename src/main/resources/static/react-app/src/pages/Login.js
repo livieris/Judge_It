@@ -103,15 +103,27 @@
 // src/Login.js
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
+import { setUser } from '../actions/userActions';
 import '../css/Login.css';
+import { loginUser } from '../redux/userSlice';
 
 const Login = ({ onLogin, onToggleView }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  
+  // Replace with actual user data 
+  const userData = { 
+    firstName: 'Shane',
+    lastName: 'Livieri'
+  };
 
   const handleLogin = () => {
     // Pass the login data to the parent component
     onLogin(username, password);
+    // Dispatch sets the userData to retrieve later on.
+    dispatch(loginUser(userData));
   };
 
   return (

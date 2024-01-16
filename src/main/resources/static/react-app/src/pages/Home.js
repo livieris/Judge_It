@@ -16,10 +16,11 @@ const Home = ({ onLogout }) => {
         <MyNavbar />
         <div id="home-container">
         <div className="content">
-          <h2>Welcome to the Home Page!</h2>
+          <h2>Welcome to The Judge!</h2>
           <button onClick={onLogout}>Logout</button>
           <p>
-            Content and fields will be shown here.
+            You can create a new show. Modify an existing show. <br></br>
+            You can also see winners and set winners for each class for a show!
           </p>
           </div>
         </div>

@@ -1,0 +1,4 @@
+When adding or updating user state. Files to look at update:
+    userSlice.js
+    login.js
+    component or page after login. See navbar.js on retrieving user state data and displaying.

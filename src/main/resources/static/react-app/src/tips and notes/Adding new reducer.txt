@@ -1,0 +1,4 @@
+To add a new reducer..
+    copy userSlice as template
+    add new reducer to redux/store.js
+    for examples on setting new state within the component or page.. can look at login.js
