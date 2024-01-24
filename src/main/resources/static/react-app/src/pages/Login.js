@@ -106,7 +106,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 import { setUser } from '../actions/userActions';
 import '../css/Login.css';
-import { loginUser } from '../redux/userSlice';
+import { updateUser } from '../redux/userSlice';
 
 const Login = ({ onLogin, onToggleView }) => {
   const [username, setUsername] = useState('');
@@ -116,14 +116,17 @@ const Login = ({ onLogin, onToggleView }) => {
   // Replace with actual user data 
   const userData = { 
     firstName: 'Shane',
-    lastName: 'Livieri'
+    lastName: 'Livieri',
+    email: 'myemail@gmail.com',
+    username: 'admin',
+    userId: 1
   };
 
   const handleLogin = () => {
     // Pass the login data to the parent component
     onLogin(username, password);
     // Dispatch sets the userData to retrieve later on.
-    dispatch(loginUser(userData));
+    dispatch(updateUser(userData));
   };
 
   return (

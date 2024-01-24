@@ -8,10 +8,17 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: { firstName: null, lastName: null },
+  initialState: { firstName: null, lastName: null, email: null, userName: null, userId: null },
   reducers: {
-    loginUser: (state, action) => {
-      return { ...state, firstName: action.payload.firstName, lastName: action.payload.lastName };
+    updateUser: (state, action) => {
+      return { 
+        ...state, 
+        firstName: action.payload.firstName, 
+        lastName: action.payload.lastName,
+        email: action.payload.email,
+        userName: action.payload.userName,
+        userId: action.payload.userId
+      };
     },
     logoutUser: (state) => {
       return { ...state, firstName: null, lastName: null };
@@ -19,5 +26,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginUser, logoutUser } = userSlice.actions;
+export const { logoutUser, updateUser } = userSlice.actions;
 export default userSlice.reducer;
