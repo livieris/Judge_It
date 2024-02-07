@@ -28,8 +28,20 @@ springBoot {
 	mainClass = "com.project.Judge_It.JudgeItApplication"
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.project.Judge_It.JudgeItApplication'
+        )
+    }
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+}
+task runSpringBoot(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+    group = 'application'
+    description = 'Run the Spring Boot application'
 }
 
 apply plugin: 'org.springframework.boot'

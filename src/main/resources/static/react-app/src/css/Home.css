@@ -20,7 +20,7 @@ nav {
   width: 100%;
   margin: 0;
   padding: 0;
-  display: flex; /* Add display:flex to home-container if needed */
+   /* Add display:flex to home-container if needed */
   flex-direction: column; /* Adjust flex properties as needed */
   /* Add any additional styles as needed */
 }

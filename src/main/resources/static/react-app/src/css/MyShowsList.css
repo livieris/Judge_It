@@ -1,0 +1,23 @@
+.showFieldTab {
+    text-align: center;
+}
+
+.showName {
+    text-align: center;
+}
+
+#myShowList-container {
+    display: inline;
+}
+
+.trash-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust this value to properly position the icon */
+    transform: translateY(-50%);
+    transition: color 0.3s ease; /* Smooth transition effect for color change */
+  }
+  .trash-icon:hover {
+    color: #ff0000; /* Change the color on hover */
+    /* You can also add other hover effects here, like box-shadow or scale */
+  }

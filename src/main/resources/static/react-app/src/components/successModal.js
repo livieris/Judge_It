@@ -71,7 +71,7 @@ const SuccessModal = ({ show, onHide, success, content }) => {
         <h4>{content}</h4>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button style={{backgroundColor:"#0d6efd"}} variant="secondary" onClick={onHide}>
           Close
         </Button>
       </Modal.Footer>

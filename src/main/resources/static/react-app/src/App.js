@@ -35,6 +35,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import MyAccount from './components/myAccount';
 import ChangePassword from './components/changePassword';
+import MyShows from './pages/MyShows';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -79,18 +80,26 @@ const App = () => {
             path="/profile/*"
             element={loggedIn ? <Profile onLogout={handleLogout} /> : <Navigate to="/profile" />}
           /> */}
-            <Route
-              path="/profile/*"
-              element={loggedIn ? (
-                <Profile onLogout={handleLogout}>
-                  <Route index element={<Navigate to="myAccount" />} />
-                  <Route path="myAccount" element={<MyAccount />} />
-                  <Route path="changePassword" element={<ChangePassword />} />
-                </Profile>
-              ) : (
+          <Route
+            path="/profile/*"
+            element={loggedIn ? (
+              <Profile onLogout={handleLogout}>
+                <Route index element={<Navigate to="myAccount" />} />
+                <Route path="myAccount" element={<MyAccount />} />
+                <Route path="changePassword" element={<ChangePassword />} />
+              </Profile>
+            ) : (
+              <Navigate to="/login" />
+            )}
+          />
+          <Route
+            path="/myShows"
+            element={loggedIn ? (
+              <MyShows onLogout={handleLogout} />
+              ) : 
                 <Navigate to="/login" />
-              )}
-            />
+              }
+          />
           <Route index element={<Navigate to="/login" />} />
         </Routes>
       </div>

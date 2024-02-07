@@ -2,6 +2,8 @@
     padding-bottom: 15px;
 }
 
-.password-button {
-    margin-left: 5px;
+.my-account-container {
+    padding: 15px;
+    border: #0d6efd;
+    border-style: double
 }

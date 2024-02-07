@@ -1,0 +1,9 @@
+body.home-body {
+    align-items: start;
+    margin-top: 50px;
+    display: flow;
+}
+
+#myShow-container {
+    display: inline;
+}

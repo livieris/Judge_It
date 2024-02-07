@@ -6,6 +6,7 @@ import { updateUser } from '../redux/userSlice';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import SuccessModal from './successModal';
+import { FloatingLabel } from 'react-bootstrap';
 import '../css/MyAccount.css'
 
 const MyAccount = ({ onToggleView }) => {
@@ -22,6 +23,7 @@ const MyAccount = ({ onToggleView }) => {
   const [lastName, setLastName] = useState(user.lastName || '');
   const [email, setEmail] = useState(user.email || '');
   const [userName, setUserName] = useState(user.userName || '');
+  const [validationError, setValidationError] = useState('');
 
   // Update form fields when user data changes
   useEffect(() => {
@@ -56,55 +58,110 @@ const MyAccount = ({ onToggleView }) => {
     onToggleView('changePassword');
   };
 
+  //Dynamically handle text field changes
+  const handleFieldChange = (fieldName, value) => {
+    const setterFunction = `set${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)}`;
+    // Dynamically access the setter function based on the fieldName
+    const setField = setters[setterFunction];
+    
+    if (setField) {
+      setField(value);
+      if (value === '') {
+        setValidationError(`${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)} cannot be empty.`);
+      } else {
+        setValidationError('');
+      }
+    }
+  }
+
+  //Function setters for fields/state
+  const setters = {
+    setFirstName: setFirstName,
+    setLastName: setLastName,
+    setEmail: setEmail,
+    setUserName: setUserName,
+  };
+
+  const getStatus = () => {
+    if(validationError) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const getContent = () => {
+    if(validationError) {
+      return validationError;
+    } else {
+      return "Your account has been successfully updated!";
+    }
+  }
+
   return (
     <div>
-      <h2>My Account</h2>
-      <Form onSubmit={handleSubmit} className="my-account-container">
-        <Form.Group className="account-fields" controlId="formFirstName">
-          <Form.Label className="text-left">First Name:</Form.Label>
+  <h2>My Account</h2>
+  <Form onSubmit={handleSubmit} className="my-account-container">
+    <div className="d-flex flex-column">
+      <Form.Group className="account-fields" controlId="formFirstName">
+        <FloatingLabel controlId="floatingFirstName" label="First Name">
           <Form.Control
             type="text"
             placeholder="Enter first name"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => handleFieldChange('firstName', e.target.value)}
           />
-        </Form.Group>
-        <Form.Group className="account-fields" controlId="formLastName">
-          <Form.Label className="text-left">Last Name:</Form.Label>
+        </FloatingLabel>
+      </Form.Group>
+      <Form.Group className="account-fields" controlId="formLastName">
+        <FloatingLabel controlId="floatingLastName" label="Last Name">
           <Form.Control
             type="text"
             placeholder="Enter last name"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => handleFieldChange('lastName', e.target.value)}
           />
-        </Form.Group>
-        <Form.Group className="account-fields" controlId="formEmail">
-          <Form.Label className="text-left">Email:</Form.Label>
+        </FloatingLabel>
+      </Form.Group>
+      <Form.Group className="account-fields" controlId="formEmail">
+        <FloatingLabel controlId="floatingEmail" label="Email">
           <Form.Control
             type="text"
             placeholder="Enter email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => handleFieldChange('email', e.target.value)}
           />
-        </Form.Group>
-        <Form.Group className="account-fields" controlId="formUserName">
-          <Form.Label className="text-left">User Name:</Form.Label>
+        </FloatingLabel>
+      </Form.Group>
+      <Form.Group className="account-fields" controlId="formUserName">
+        <FloatingLabel controlId="floatingUserName" label="User Name">
           <Form.Control
             type="text"
             placeholder="Enter user name"
             value={userName}
-            onChange={(e) => setUserName(e.target.value)}
+            onChange={(e) => handleFieldChange('userName', e.target.value)}
           />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Save
-        </Button>
+        </FloatingLabel>
+      </Form.Group>
+      {validationError && <div className="text-danger">{validationError}</div>}
+      <div className="d-flex justify-content-between align-items-center">
         <Button className="password-button" variant="primary" onClick={handlePasswordClick}>
           Change Password
         </Button>
-      </Form>
-      <SuccessModal show={showSuccessModal} onHide={handleCloseSuccessModal} />
+        <Button variant="primary" type="submit" disabled={!!validationError}>
+          Save
+        </Button>
+      </div>
     </div>
+  </Form>
+  <SuccessModal
+    show={showSuccessModal} 
+    onHide={handleCloseSuccessModal} 
+    success={getStatus()}
+    content={getContent()}
+  />
+</div>
+
   );
 };
 

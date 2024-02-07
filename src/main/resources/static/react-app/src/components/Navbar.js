@@ -26,6 +26,7 @@ const MyNavbar = ({ onMyAccountClick }) => {
     setLoggedIn(false);
     navigate('/login');
   };
+
   const handleMyAccountClick = () => {
     console.log("Navbar-ROUTE before " + currentRoute);
     if(currentRoute !== '/profile/myAccount') {
@@ -44,10 +45,7 @@ const MyNavbar = ({ onMyAccountClick }) => {
           <Nav.Link as={NavLink} to={"/home"} >Home</Nav.Link>
           <Nav.Link href="#">Features</Nav.Link>
           <Nav.Link href="#">Pricing</Nav.Link>
-          <NavDropdown title="My Shows" id="navbarDropdownMenuLink-333">
-            <NavDropdown.Item href="#">Create A Show</NavDropdown.Item>
-            <NavDropdown.Item href="#">My Shows</NavDropdown.Item>
-          </NavDropdown>
+          <Nav.Link as={NavLink} to={"/myShows"}>My Shows</Nav.Link>
         </Nav>
         <Nav className="nav-flex-icons user-icon-dropdown">
           <NavDropdown
@@ -61,7 +59,7 @@ const MyNavbar = ({ onMyAccountClick }) => {
             drop="down"
             onSelect={handleMyAccountClick}
           >
-            <NavDropdown.Item href="#">My Shows</NavDropdown.Item>
+            <NavDropdown.Item as={NavLink} to={"/myShows"}>My Shows</NavDropdown.Item>
             <NavDropdown.Item onClick={onMyAccountClick}>My Account</NavDropdown.Item>
             <NavDropdown.Item href="#">Logout</NavDropdown.Item>
           </NavDropdown>

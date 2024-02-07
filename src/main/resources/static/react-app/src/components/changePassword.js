@@ -6,6 +6,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import SuccessModal from './successModal';
 import '../css/ChangePassword.css'
+import { FloatingLabel } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { BsInfoCircle } from 'react-icons/bs';
 
 const ChangePassword = ({ onToggleView }) => {
   const dispatch = useDispatch();
@@ -132,44 +135,74 @@ const ChangePassword = ({ onToggleView }) => {
     <div>
       <h2>Change Your Password</h2>
       <Form onSubmit={handleSubmit}>
+        <div className="d-flex flex-column">
       <Form.Group className="password-fields" controlId="oldPassword">
-        <Form.Label>Old Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Enter old password"
-          value={oldPassword}
-          onChange={handleOldPasswordChange}
-        />
+        {/* <Form.Label>Old Password</Form.Label> */}
+        <FloatingLabel
+          controlId="floatingInput"
+          label="Old Password"
+          className="mb-3"
+          >
+          <Form.Control
+            type="password"
+            placeholder="Enter old password"
+            value={oldPassword}
+            onChange={handleOldPasswordChange}
+          />
+        </FloatingLabel>
       </Form.Group>
 
       <Form.Group className="password-fields" controlId="newPassword">
-        <Form.Label>New Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Enter new password"
-          value={newPassword}
-          onChange={handleNewPasswordChange}
-        />
+        {/* <Form.Label>New Password</Form.Label> */}
+        <FloatingLabel
+          controlId="floatingInput"
+          label="New Password"
+          className="mb-3"
+          >
+          <Form.Control
+            type="password"
+            placeholder="Enter new password"
+            value={newPassword}
+            onChange={handleNewPasswordChange}
+          />
+          <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip id="info-tooltip">Your password must be 8-20 characters long, one uppercase, one number, one special character,
+          and must not contain spaces, or emoji.</Tooltip>}
+        >
+          <span className="position-absolute top-0 end-0 p-1">
+            <BsInfoCircle style={{ color: 'gray' }} />
+          </span>
+        </OverlayTrigger>          
+        </FloatingLabel>
       </Form.Group>
-
       <Form.Group className="password-fields" controlId="confirmPassword">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Confirm new password"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-        />
+        {/* <Form.Label>Confirm Password</Form.Label> */}
+        <FloatingLabel
+          controlId="floatingInput"
+          label="Confirm Password"
+          className="mb-3"
+          >
+          <Form.Control
+            type="password"
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+        </FloatingLabel>
       </Form.Group>
 
       {validationError && <div className="text-danger">{validationError}</div>}
-
-      <Button variant="primary" type="submit">
-        Change Password
-      </Button>
+      <div className="d-flex justify-content-between align-items-center">
       <Button className="back-button" variant="primary" onClick={handleBackClick}>
         Back
       </Button>
+      <Button className="save-button" variant="primary" type="submit">
+        Save Password
+      </Button>
+
+      </div>
+      </div>
       </Form>
       <SuccessModal 
         show={showSuccessModal} 

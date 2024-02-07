@@ -1,7 +1,7 @@
 // src/Profile.js
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import '../css/Home.css';
+import '../css/Profile.css';
 import MyNavbar from '../components/Navbar';
 import MyAccount from '../components/myAccount';
 import ChangePassword from '../components/changePassword'
