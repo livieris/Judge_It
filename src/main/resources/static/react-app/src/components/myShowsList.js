@@ -13,14 +13,14 @@ import Tab from 'react-bootstrap/Tab';
 import axios from 'axios';
 import { FaTrash } from 'react-icons/fa';
 
-const MyShowsList = ({ showData, onCreateShow }) => {
+const MyShowsList = ({ showData, updateShowTabsAndData }) => {
   // Check if logged in, otherwise navigate to login
   const isLoggedIn = true; // You would replace this with your actual authentication check
   const [selectedShow, setSelectedShow] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showIdToDelete, setShowIdToDelete] = useState(null);
-  const showNames = showData.map((show) => show.showName);
-  console.log("Show name: ", showNames);
+  const [isCreatingNewShow, setIsCreatingNewShow] = useState(false);
+
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
@@ -28,12 +28,15 @@ const MyShowsList = ({ showData, onCreateShow }) => {
   //Show Tab is clicked
   const handleTabClick = (show) => {
     setSelectedShow(show === 'createNewShow' ? null : show);
+    setIsCreatingNewShow(show === 'createNewShow' ? true : false);
   };
 
   //Create new show table clicked
   const handleCreateNewShowTabClick = () => {
     // Reset selectedShow state when "Create New Show" tab is clicked
+    console.log("IN CREATE SHOW CLICK");
     setSelectedShow(null);
+    setIsCreatingNewShow(true);
   }
 
   // Trash Can icon clicked
@@ -56,7 +59,7 @@ const MyShowsList = ({ showData, onCreateShow }) => {
       const response = await axios.delete(`http://localhost:8080/api/carshows/${showIdToDelete}`);
       console.log("Show deleted successfully:", response.data);
       // Update UI to show new car show list
-      onCreateShow();
+      updateShowTabsAndData();
     } catch (error) {
       console.error('Error deleting show:', error);
     }
@@ -76,6 +79,9 @@ const MyShowsList = ({ showData, onCreateShow }) => {
       return "Yes, Delete";
     }
   }
+
+  const showNames = showData.map((show) => show.showName);
+  console.log("Show name: ", showNames);
 
   document.body.classList.add('home-body');
   return (
@@ -111,12 +117,12 @@ const MyShowsList = ({ showData, onCreateShow }) => {
               <Tab.Content className="showFieldTab">
                 {showData.map((show, index) => (
                   <Tab.Pane key={index} eventKey={index}>
-                    <ShowFields showData={show} />
+                    <ShowFields showData={show} updateShowTabsAndData={updateShowTabsAndData} />
                   </Tab.Pane>
                 ))}
                 {/* Show Fields for "Create New Show" Tab */}
                 <Tab.Pane eventKey="createNewShow">
-                  <ShowFields data={null} onCreateShow={onCreateShow} />
+                  <ShowFields data={null} updateShowTabsAndData={updateShowTabsAndData} isCreatingNewShow={isCreatingNewShow} />
                 </Tab.Pane>
               </Tab.Content>
             </Col>

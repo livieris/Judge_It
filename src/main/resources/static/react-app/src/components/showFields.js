@@ -1,5 +1,5 @@
 // showFields.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUser } from '../redux/userSlice';
@@ -10,12 +10,12 @@ import { FloatingLabel } from 'react-bootstrap';
 import axios from 'axios';
 import '../css/showFields.css'
 
-const ShowFields = ({ showData, onCreateShow }) => {
+const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     // Get user data from Redux state
-    const user = useSelector((state) => state.user);   
+    const user = useSelector((state) => state.user);
 
     // State for form fields, initialized with user data
     const [showId, setShowId] = useState('');
@@ -26,19 +26,88 @@ const ShowFields = ({ showData, onCreateShow }) => {
     const [costPerPerson, setCostPerPerson] = useState('');
     const [validationError, setValidationError] = useState('');
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showCreateOrUpdate, setShowCreateOrUpdate] = useState('');
+    const [modalSucessContent, setModalSucessContent] = useState('');
+    const [modalSucessStatus, setModalSucessStatus] = useState(false);
+    const [focusState, setFocusState] = useState({
+        showName: false,
+        dateOfShow: false,
+        city: false,
+        state: false,
+        costPerPerson: false,
+    });
+
+    //Function setters for fields/state
+    const setters = {
+        setShowName: setShowName,
+        setDateOfShow: setDateOfShow,
+        setCity: setCity,
+        setState: setState,
+        setCostPerPerson: setCostPerPerson
+    };
 
     useEffect(() => {
+        console.log("IN EFFECT");
         if (showData) {
-            console.log("SHOW DATA IN SHOW FIELDS", showData);
             setShowId(showData.id || '');
             setShowName(showData.showName || '');
             setDateOfShow(showData.date || '');
             setCity(showData.city || '');
             setState(showData.state || '');
             setCostPerPerson(showData.cost || '');
-
         }
-    }, [showData]);
+        if (isCreatingNewShow) {
+            console.log("Resetting form fields for creating new show...");
+            setShowId('');
+            setShowName('');
+            setDateOfShow('');
+            setCity('');
+            setState('');
+            setCostPerPerson('');
+        }
+        if (showSuccessModal) {
+            console.log("GET CONTENT, GET STATUS");
+            const modalSucessContent = showCreateOrUpdate === "create" ? `'${showName}' has been successfully created!` : `'${showName}' has been successfully updated!`;
+            // Update state with the content
+            setModalSucessContent(modalSucessContent);
+
+            const modalSucessStatus = validationError ? false : true;
+            setModalSucessStatus(modalSucessStatus);
+        }
+    }, [showData, isCreatingNewShow, showSuccessModal]);
+
+    const handleFocus = (fieldName) => {
+        setFocusState((prevState) => ({
+            ...prevState,
+            [fieldName]: true,
+        }));
+        const fieldNameData = eval(fieldName);
+        const labelName = getLabelName(fieldName);
+        if (!fieldNameData) {
+            setValidationError(`'${labelName}' cannot be empty`)
+        }
+    };
+
+    const handleBlur = (fieldName) => {
+        setFocusState((prevState) => ({
+            ...prevState,
+            [fieldName]: false,
+        }));
+        console.log(fieldName);
+        const labelName = getLabelName(fieldName);
+        setValidationError('')
+
+    };
+
+    const getLabelName = (fieldName) => {
+        // Split the fieldName string into words based on camelCase or PascalCase
+        const words = fieldName.split(/(?=[A-Z])/);
+
+        // Capitalize the first letter of each word and join them with a space
+        const labelName = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+        return labelName;
+    }
 
     const handleCloseSuccessModal = () => {
         // Close success modal
@@ -61,119 +130,69 @@ const ShowFields = ({ showData, onCreateShow }) => {
         console.log('SHOW DATA: ', newShowData);
 
         // Create or update if exists.
-        if(!showData) {
-        axios.post('http://localhost:8080/api/carshows/create', newShowData)
-            .then(response => {
-                console.log("Show Created successfully: ", response.data);
-                setShowSuccessModal(true);
-                // Callback function passed through to parent myshows.js to update the show tabs
-                onCreateShow();
-                
-                //clear fields
-                setShowName('');
-                setDateOfShow('');
-                setCity('');
-                setState('');
-                setCostPerPerson('');
-            })
-            .catch(error => {
-                //TODO: call modal for error
-                console.error('Error create a new show: ', error);
-            });
-        // Update Redux state
-        // dispatch(updateUser({ firstName, lastName, email, userName }));
+        if (!showData) {
+            axios.post('http://localhost:8080/api/carshows/create', newShowData)
+                .then(response => {
+                    console.log("Show Created successfully: ", response.data);
+                    setShowCreateOrUpdate('create');
+                    setShowSuccessModal(true);
+                    // Callback function passed through to parent myshows.js to update the show tabs
+                    updateShowTabsAndData();
+                    console.log("RIGHT BEFORE CLEAR IN SUBMIT");
+                })
+                .catch(error => {
+                    //TODO: call modal for error
+                    console.error('Error create a new show: ', error);
+                });
+            // Update Redux state
+            // dispatch(updateUser({ firstName, lastName, email, userName }));
         } else {
             axios.put(`http://localhost:8080/api/carshows/${showId}`, newShowData)
-            .then(response => {
-                console.log("Show updated successfully: ", response.data);
-                setShowSuccessModal(true);
-                // Optionally, you can perform any necessary actions after the show is updated
-            })
-            .catch(error => {
-                //TODO: call modal for error
-                console.error('Error updating the show: ', error);
-            });
+                .then(response => {
+                    console.log("Show updated successfully: ", response.data);
+                    setShowCreateOrUpdate('update');
+                    setShowSuccessModal(true);
+                    updateShowTabsAndData();
+                    // Optionally, you can perform any necessary actions after the show is updated
+                })
+                .catch(error => {
+                    //TODO: call modal for error
+                    console.error('Error updating the show: ', error);
+                });
         }
         // Show success modal
         setShowSuccessModal(false);
-
-        // Perform actions with form data, e.g., update user information
-        // console.log('Submitted:', { firstName, lastName, email, userName });
     };
 
     const handleShowWinnersClick = () => {
-        // Trigger the function passed from the parent component
         navigate('/profile/showWinners');
-        // onToggleView('changePassword');
     };
 
     //Dynamically handle text field changes
     const handleFieldChange = (fieldName, value) => {
-        //TODO: Add in form field validation similar to myaccount.
+        const setterFunction = `set${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)}`;
+        // Dynamically access the setter function based on the fieldName
+        const setField = setters[setterFunction];
+        const labelName = getLabelName(fieldName);
 
-        // const setterFunction = `set${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)}`;
-        // // Dynamically access the setter function based on the fieldName
-        // const setField = setters[setterFunction];
-
-        // if (setField) {
-        //     setField(value);
-        //     if (value === '') {
-        //         setValidationError(`${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)} cannot be empty.`);
-        //     } else {
-        //         setValidationError('');
-        //     }
-        // } 
-        switch (fieldName) {
-            case 'showName':
-                setShowName(value);
-                break;
-            case 'dateOfShow':
-                console.log("DATE: " + value);
-                setDateOfShow(value);
-                break;
-            case 'city':
-                setCity(value);
-                break;
-            case 'state':
-                setState(value);
-                break;
-            case 'costPerPerson':
-                setCostPerPerson(value);
-                break;
-            default:
-                break;
-        }       
+        if (setField) {
+            setField(value);
+            if (value === '') {
+                setValidationError(`'${labelName.charAt(0).toUpperCase()}${labelName.slice(1)}' cannot be empty.`);
+            } else {
+                setValidationError('');
+            }
+        }
+        console.log("validation error: ", validationError);
     }
 
-    const handleDateChange = (e) => {
-        const selectedDate = e.target.value; // Selected date in YYYY-MM-DD format
-        setDateOfShow(selectedDate); // Update the state with the selected date
-    };
-
-    //Function setters for fields/state
-    const setters = {
-        // setFirstName: setFirstName,
-        // setLastName: setLastName,
-        // setEmail: setEmail,
-        // setUserName: setUserName,
-        setDateOfShow: setDateOfShow
-    };
-
-    const getStatus = () => {
-        if (validationError) {
-            return false;
-        } else {
+    const handleDisableSubmitButton = () => {
+        if (!!validationError || !showName || !city || !dateOfShow || !state || !costPerPerson) {
             return true;
-        }
-    }
-
-    const getContent = () => {
-        if (validationError) {
-            return validationError;
         } else {
-            return `'${showName}' has been successfully updated!`;
+            return false;
         }
-    }
+    };
 
     return (
         <div>
@@ -186,6 +205,8 @@ const ShowFields = ({ showData, onCreateShow }) => {
                                 placeholder="Enter show name"
                                 value={showName}
                                 onChange={(e) => handleFieldChange('showName', e.target.value)}
+                                onFocus={() => handleFocus('showName')}
+                                onBlur={() => handleBlur('showName')}
                             />
                         </FloatingLabel>
                     </Form.Group>
@@ -195,6 +216,8 @@ const ShowFields = ({ showData, onCreateShow }) => {
                                 type="date"
                                 value={dateOfShow}
                                 onChange={(e) => handleFieldChange('dateOfShow', e.target.value)}
+                                onFocus={() => handleFocus('dateOfShow')}
+                                onBlur={() => handleBlur('dateOfShow')}
                             />
                         </FloatingLabel>
                     </Form.Group>
@@ -205,6 +228,8 @@ const ShowFields = ({ showData, onCreateShow }) => {
                                 placeholder="Enter city"
                                 value={city}
                                 onChange={(e) => handleFieldChange('city', e.target.value)}
+                                onFocus={() => handleFocus('city')}
+                                onBlur={() => handleBlur('city')}
                             />
                         </FloatingLabel>
                     </Form.Group>
@@ -215,25 +240,30 @@ const ShowFields = ({ showData, onCreateShow }) => {
                                 placeholder="Enter state"
                                 value={state}
                                 onChange={(e) => handleFieldChange('state', e.target.value)}
+                                onFocus={() => handleFocus('state')}
+                                onBlur={() => handleBlur('state')}
                             />
                         </FloatingLabel>
                     </Form.Group>
                     <Form.Group className="show-fields" controlId="formCostPerPerson">
                         <FloatingLabel controlId="floatingCostPerPerson" label="Cost Per Person">
                             <Form.Control
-                                type="text"
+                                type="number"
                                 placeholder="Enter cost per person"
                                 value={costPerPerson}
                                 onChange={(e) => handleFieldChange('costPerPerson', e.target.value)}
+                                onFocus={() => handleFocus('costPerPerson')}
+                                onBlur={() => handleBlur('costPerPerson')}
                             />
                         </FloatingLabel>
                     </Form.Group>
+                    {validationError && <div className="text-danger">{validationError}</div>}
                     <div className="d-flex justify-content-between align-items-center show-buttons">
                         <Button className="show-winners-button" variant="primary" onClick={handleShowWinnersClick}>
                             Show Winners
                         </Button>
-                        <Button variant="primary" type="submit" disabled={!!validationError}>
-                            Submit
+                        <Button variant="primary" type="submit" disabled={handleDisableSubmitButton()}>
+                            {isCreatingNewShow ? "Submit" : "Update"}
                         </Button>
                     </div>
                 </div>
@@ -241,8 +271,8 @@ const ShowFields = ({ showData, onCreateShow }) => {
             <SuccessModal
                 show={showSuccessModal}
                 onHide={handleCloseSuccessModal}
-                success={getStatus()}
-                content={getContent()}
+                success={modalSucessStatus}
+                content={modalSucessContent}
             />
 
         </div>
