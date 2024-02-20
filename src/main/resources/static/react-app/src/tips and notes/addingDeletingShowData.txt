@@ -1,0 +1,5 @@
+10 shows will be automatically inserted everytime spring is started.
+    This is done using two classes in java/com/project/judge_it/dummyData
+
+in react-app/src/dummyDataPopulation/carShowData.js
+    contains a file that will add more shows based a count. You can also delete all shows for a user as well.

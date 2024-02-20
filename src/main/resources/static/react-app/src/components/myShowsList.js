@@ -1,9 +1,10 @@
 // src/myShowsList.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import '../css/Home.css';
 import MyNavbar from '../components/Navbar';
 import ShowFields from '../components/showFields';
+import ShowCategories from './showCategories';
 import DeleteSaveUpdateModal from './deleteSaveUpdateModal';
 import '../css/MyShowsList.css'
 import Col from 'react-bootstrap/Col';
@@ -19,16 +20,30 @@ const MyShowsList = ({ showData, updateShowTabsAndData }) => {
   const [selectedShow, setSelectedShow] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showIdToDelete, setShowIdToDelete] = useState(null);
-  const [isCreatingNewShow, setIsCreatingNewShow] = useState(false);
+  const [isCreatingNewShow, setIsCreatingNewShow] = useState(true);
+  const [selectedNavTab, setSelectedNavTab] = useState('showInformation');
+  
+  // useEffect(() => {
+  //   console.log("SELECTED NAV TAB: ", selectedNavTab);
+  // }, [selectedNavTab]);
 
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
 
+
+
   //Show Tab is clicked
   const handleTabClick = (show) => {
     setSelectedShow(show === 'createNewShow' ? null : show);
     setIsCreatingNewShow(show === 'createNewShow' ? true : false);
+    setSelectedNavTab("showInformation");
+  };
+
+  const handleNavClick = (component) => {
+    console.log("COMPONENT SELECTED: ", component);
+    console.log("SELECTED SHOW IN NAV: ", selectedShow);
+    setSelectedNavTab(component);
   };
 
   //Create new show table clicked
@@ -113,18 +128,39 @@ const MyShowsList = ({ showData, updateShowTabsAndData }) => {
               </Nav>
             </Col>
             <Col sm={9}>
-              <h2>Show Information</h2>
+              {/** SHOW INFORMATION */}
+              {selectedNavTab === 'showInformation' && (
+                <div>
               <Tab.Content className="showFieldTab">
                 {showData.map((show, index) => (
                   <Tab.Pane key={index} eventKey={index}>
-                    <ShowFields showData={show} updateShowTabsAndData={updateShowTabsAndData} />
+                    <ShowFields showData={show} updateShowTabsAndData={updateShowTabsAndData} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab}/>
                   </Tab.Pane>
                 ))}
                 {/* Show Fields for "Create New Show" Tab */}
                 <Tab.Pane eventKey="createNewShow">
-                  <ShowFields data={null} updateShowTabsAndData={updateShowTabsAndData} isCreatingNewShow={isCreatingNewShow} />
+                  <ShowFields data={null} updateShowTabsAndData={updateShowTabsAndData} isCreatingNewShow={isCreatingNewShow} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab}/>
                 </Tab.Pane>
               </Tab.Content>
+              </div>
+              )}
+
+              {/** SHOW CATEGORIES */}
+              {selectedNavTab === 'showCategories' && (
+                <div>
+              <Tab.Content className="showFieldTab">
+                {showData.map((show, index) => (
+                  <Tab.Pane key={index} eventKey={index}>
+                    <ShowCategories showData={show} updateShowTabsAndData={updateShowTabsAndData} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab}/>
+                  </Tab.Pane>
+                ))}
+                {/* Show Fields for "Create New Show" Tab */}
+                <Tab.Pane eventKey="createNewShow">
+                  <ShowCategories data={null} updateShowTabsAndData={updateShowTabsAndData} isCreatingNewShow={isCreatingNewShow} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab}/>
+                </Tab.Pane>
+              </Tab.Content>
+              </div>
+              )}
             </Col>
           </Row>
         </Tab.Container>

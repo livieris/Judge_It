@@ -15,11 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Judge_It.model.CarShow;
 import com.project.Judge_It.repository.*;
+import com.project.Judge_It.dummyData.CarShowDataGenerator;
 import com.project.Judge_It.exception.ResourceNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("api/carshows")
 public class CarShowController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CarShowController.class);
+
     @Autowired
     private CarShowRepository carShowRepository;
 
@@ -43,6 +50,7 @@ public class CarShowController {
         return ResponseEntity.ok(carShow);
     }
 
+    // Endpoint to get all car shows per user
     @GetMapping("/user/{userId}")
     public List<CarShow> getAllCarShowsByUserId(@PathVariable Long userId) {
         return carShowRepository.findByUserId(userId);
@@ -59,6 +67,7 @@ public class CarShowController {
         carShow.setCity(updatedCarShow.getCity());
         carShow.setState(updatedCarShow.getState());
         carShow.setCost(updatedCarShow.getCost());
+        carShow.setTotalClasses(updatedCarShow.getTotalClasses());
         
         CarShow savedCarShow = carShowRepository.save(carShow);
         return ResponseEntity.ok(savedCarShow);
@@ -68,6 +77,14 @@ public class CarShowController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCarShow(@PathVariable Long id) {
         carShowRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // Endpoint to delete all car show by userId
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteAllUsersCarShows(@PathVariable Long userId) {
+        logger.info("IN DELETE:  " + userId);
+        carShowRepository.deleteByUserId(userId);
         return ResponseEntity.ok().build();
     }
 }

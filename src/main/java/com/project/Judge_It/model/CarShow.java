@@ -19,18 +19,20 @@ public class CarShow {
     private String city;
     private String state;
     private double cost;
+    private int totalClasses;
 
     public CarShow(){
 
     }
 
-    public CarShow(Long userId, String showName, LocalDate date, String city, String state, double cost) {
+    public CarShow(Long userId, String showName, LocalDate date, String city, String state, double cost, int totalClasses) {
         this.userId = userId;
         this.showName = showName;
         this.date = date;
         this.city = city;
         this.state = state;
         this.cost = cost;
+        this.totalClasses = totalClasses;
     }
 
     public Long getId() {
@@ -89,6 +91,14 @@ public class CarShow {
         this.cost = cost;
     }
 
+    public int getTotalClasses() {
+        return totalClasses;
+    }
+
+    public void setTotalClasses(int totalClasses) {
+        this.totalClasses = totalClasses;
+    }
+
     // toString() method for logging and debugging
     @Override
     public String toString() {
@@ -99,7 +109,8 @@ public class CarShow {
                 ", date=" + date +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
-                ", cost=" + cost +
+                ", cost=" + cost + '\'' +
+                ", totalClasses=" + totalClasses +
                 '}';
     }
 }

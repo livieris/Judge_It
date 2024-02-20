@@ -11,7 +11,7 @@ import { FloatingLabel } from 'react-bootstrap';
 import axios from 'axios';
 import '../css/showFields.css'
 
-const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handleNavClick, selectedNavTab }) => {
+const ShowCategories = ({ showData, updateShowTabsAndData, isCreatingNewShow, handleNavClick, selectedNavTab }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -208,7 +208,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
              handleNavClick={handleNavClick}
              selectedNavTab={selectedNavTab}
             />
-            <h2>Show Information</h2>
+            <h2>Show Categories</h2>
             <Form onSubmit={handleSubmit} className="my-show-field-container">
                 <div className="d-flex flex-column">
                     <Form.Group className="show-fields" controlId="formShowName">
@@ -305,4 +305,4 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
     );
 };
 
-export default ShowFields;
+export default ShowCategories;
