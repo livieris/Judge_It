@@ -52,7 +52,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
     };
 
     useEffect(() => {
-        console.log("IN EFFECT");
+        // console.log("IN SF EFFECT");
         if (showData) {
             setShowId(showData.id || '');
             setShowName(showData.showName || '');
@@ -63,7 +63,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
             setTotalClasses(showData.totalClasses || '');
         }
         if (isCreatingNewShow) {
-            console.log("Resetting form fields for creating new show...");
+            // console.log("Resetting form fields for creating new show...");
             setShowId('');
             setShowName('');
             setDateOfShow('');
@@ -73,7 +73,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
             setTotalClasses('');
         }
         if (showSuccessModal) {
-            console.log("GET CONTENT, GET STATUS");
+            // console.log("GET CONTENT, GET STATUS");
             const modalSucessContent = showCreateOrUpdate === "create" ? `'${showName}' has been successfully created!` : `'${showName}' has been successfully updated!`;
             // Update state with the content
             setModalSucessContent(modalSucessContent);
@@ -100,7 +100,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
             ...prevState,
             [fieldName]: false,
         }));
-        console.log(fieldName);
+        // console.log(fieldName);
         const labelName = getLabelName(fieldName);
         setValidationError('')
 
@@ -123,7 +123,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
 
     // Function to handle form submission
     const handleSubmit = (e) => {
-        console.log(showData);
+        // console.log(showData);
         e.preventDefault();
 
         const newShowData = {
@@ -135,18 +135,18 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
             cost: costPerPerson,
             totalClasses: totalClasses,
         };
-        console.log('SHOW DATA: ', newShowData);
+        // console.log('SHOW DATA: ', newShowData);
 
         // Create or update if exists.
         if (!showData) {
             axios.post('http://localhost:8080/api/carshows/create', newShowData)
                 .then(response => {
-                    console.log("Show Created successfully: ", response.data);
+                    // console.log("Show Created successfully: ", response.data);
                     setShowCreateOrUpdate('create');
                     setShowSuccessModal(true);
                     // Callback function passed through to parent myshows.js to update the show tabs
                     updateShowTabsAndData();
-                    console.log("RIGHT BEFORE CLEAR IN SUBMIT");
+                    // console.log("RIGHT BEFORE CLEAR IN SUBMIT");
                 })
                 .catch(error => {
                     //TODO: call modal for error
@@ -157,7 +157,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
         } else {
             axios.put(`http://localhost:8080/api/carshows/${showId}`, newShowData)
                 .then(response => {
-                    console.log("Show updated successfully: ", response.data);
+                    // console.log("Show updated successfully: ", response.data);
                     setShowCreateOrUpdate('update');
                     setShowSuccessModal(true);
                     updateShowTabsAndData();
@@ -191,7 +191,7 @@ const ShowFields = ({ showData, updateShowTabsAndData, isCreatingNewShow, handle
                 setValidationError('');
             }
         }
-        console.log("validation error: ", validationError);
+        // console.log("validation error: ", validationError);
     }
 
     const handleDisableSubmitButton = () => {

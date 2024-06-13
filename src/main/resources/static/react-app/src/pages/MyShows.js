@@ -27,13 +27,14 @@ const MyShows = ({ onLogout }) => {
 
   const fetchCarShowData = async (userId) => {
     try {
-      console.log("USER ID; ", userId)
+      // console.log("USER ID; ", userId);
       const response = await axios.get(`http://localhost:8080/api/carshows/user/${userId}`);
       if (response.data) {
-        console.log("IN CAR SHOW RESPONSE DATA");
+        // console.log("IN CAR SHOW RESPONSE DATA");
         setShowData(response.data);
+        // console.log(JSON.stringify(response.data));
       }
-      console.log(JSON.stringify(response.data));
+      
     } catch (error) {
       console.error('Error fetching car show data:', error);
     }
