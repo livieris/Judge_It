@@ -8,6 +8,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +24,8 @@ public interface CarShowCategoriesRepository extends JpaRepository<CarShowCatego
     @Transactional
     void deleteByShowId(Long showId);
 
-    List<CarShowCategories> findByShowId(Long showId);
+    @Query("SELECT c FROM CarShowCategories c WHERE c.showId= :showId ORDER BY c.classLetter ASC, c.classification ASC, c.classDescription ASC")
+    List<CarShowCategories> findByShowIdOrdered(@Param("showId") Long showId);
 
     
 }

@@ -14,7 +14,7 @@ import axios from 'axios';
 import { FaPlus } from 'react-icons/fa';
 import '../css/showFields.css';
 
-const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreatingNewCategory, handleNavClick, selectedNavTab, dropDownData }) => {
+const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreatingNewCategory, handleNavClick, selectedNavTab, dropDownData, selectedShowId }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -31,6 +31,7 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
     const [detail, setDetail] = useState([]);
     const [points, setPoints] = useState([]);
     const [detailPoints, setDetailPoints] = useState([{id: null, detail: '', points: '' }]);
+    const [hasDetailPoints, setHasDetailPoints] = useState(false);
     const [validationError, setValidationError] = useState('');
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showCreateOrUpdate, setShowCreateOrUpdate] = useState('');
@@ -95,7 +96,12 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
                 }));
 
             setDetailPoints(filteredDetailPoints);
-
+            if(detailPoints.length > 0) {
+                setHasDetailPoints(true);
+            } else {
+                setHasDetailPoints(false);
+            }
+            
             //Set initial values for comparison to handle disabling of buttons
             const initialValues = {
                 classification: categoryData[0]?.classification || '',
@@ -197,51 +203,51 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
 
     // Function to handle form submission
     const handleSubmit = (e) => {
-        console.log(categoryData);
+        console.log("OLD CAT DATA: ", categoryData);
         e.preventDefault();
 
         const newcategoryData = {
-            showId: showId,
+            showId: selectedShowId,
             classification: classification,
             classLetter: classLetter,
             classDescription: classDescription,
             component: component,
-            detail: detail,
-            points: points,
+            detail: null,
+            points: 0,
         };
-        console.log('CAT DATA: ', newcategoryData);
+        console.log('NEW CAT DATA IN SUBMIT: ', newcategoryData);
 
         // Create or update if exists.
-        // if (!categoryData) {
-        //     axios.post('http://localhost:8080/api/carshowcategories/create', newcategoryData)
-        //         .then(response => {
-        //             console.log("Category Created successfully: ", response.data);
-        //             setShowCreateOrUpdate('create');
-        //             setShowSuccessModal(true);
-        //             // Callback function passed through to parent myshows.js to update the show tabs
-        //             updateCategoryTabsAndData();
-        //             console.log("RIGHT BEFORE CLEAR IN SUBMIT");
-        //         })
-        //         .catch(error => {
-        //             //TODO: call modal for error
-        //             console.error('Error create a new show: ', error);
-        //         });
-        //     // Update Redux state
-        //     // dispatch(updateUser({ firstName, lastName, email, userName }));
-        // } else {
-        //     axios.put(`http://localhost:8080/api/carshowcategories/${categoryId}`, newcategoryData)
-        //         .then(response => {
-        //             console.log("Show updated successfully: ", response.data);
-        //             setShowCreateOrUpdate('update');
-        //             setShowSuccessModal(true);
-        //             updateCategoryTabsAndData();
-        //             // Optionally, you can perform any necessary actions after the show is updated
-        //         })
-        //         .catch(error => {
-        //             //TODO: call modal for error
-        //             console.error('Error updating the show: ', error);
-        //         });
-        // }
+        if (!categoryData) {
+            axios.post('http://localhost:8080/api/carshowcategories/create', newcategoryData)
+                .then(response => {
+                    console.log("Category Created successfully: ", response.data);
+                    setShowCreateOrUpdate('create');
+                    setShowSuccessModal(true);
+                    // Callback function passed through to parent myshows.js to update the show tabs
+                    updateCategoryTabsAndData();
+                    console.log("RIGHT BEFORE CLEAR IN SUBMIT");
+                })
+                .catch(error => {
+                    //TODO: call modal for error
+                    console.error('Error create a new show: ', error);
+                });
+            // Update Redux state
+            // dispatch(updateUser({ firstName, lastName, email, userName }));
+        } else {
+            axios.put(`http://localhost:8080/api/carshowcategories/${categoryId}`, newcategoryData)
+                .then(response => {
+                    console.log("Show updated successfully: ", response.data);
+                    setShowCreateOrUpdate('update');
+                    setShowSuccessModal(true);
+                    updateCategoryTabsAndData();
+                    // Optionally, you can perform any necessary actions after the show is updated
+                })
+                .catch(error => {
+                    //TODO: call modal for error
+                    console.error('Error updating the show: ', error);
+                });
+        }
         // // Show success modal
         // setShowSuccessModal(false);
     };
@@ -362,7 +368,7 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
 
     // disable submit button
     const handleDisableSubmitButton = () => {
-        if (!!validationError || !classification || !classDescription || !classLetter || !component || !initialFieldDataChange) {
+        if (validationError || !classification || !classDescription || !classLetter || !component || (!isCreatingNewCategory && !initialFieldDataChange)) {
             return true;
         } else {
             return false;
@@ -407,6 +413,9 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
 
         // Update the state with the new change status
         setinitialDetailPointDataChange(updatedChanges);
+        if(isCreatingNewCategory) {
+            console.log("SAVE NEW CLICKED");
+        }
     };
 
     // Delete Detail Point by grabbing id.
@@ -452,11 +461,23 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
         }
     }
 
+    const getSuccessContent = (contentNeeded) => {
+        if(isCreatingNewCategory) {        
+            if(contentNeeded === "body") {
+                return "New Category Created!";
+            }
+        } else {
+            if(contentNeeded === "body") {
+                return "Detail and points deleted Successfully.";
+            }
+        }
+    }
+
     //TODO dropdown data clicked doesn't update text change.. so button logic does not work.
     return (
         <div>
             <h2>Category</h2>
-            <Form onSubmit={handleSubmit} className="my-show-field-container">
+            <Form onSubmit={handleSubmit} className="my-show-field-container" autoComplete="off">
                 <div className="d-flex flex-column">
                     <Form.Group className="show-fields" controlId="formClassification">
                         <FloatingLabel controlId="floatingClassification" label="Classification">
@@ -522,15 +543,19 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
                             </Dropdown>
                         </FloatingLabel>
                     </Form.Group>
-                    {!isCreatingNewCategory && <div className="d-flex justify-content-between align-items-center show-buttons">
+                    {<div className="d-flex justify-content-between align-items-center show-buttons">
                         <Button variant="primary" type="submit" disabled={handleDisableSubmitButton()}>
                             {isCreatingNewCategory ? "Submit" : "Update"}
                         </Button>
-                        {<Button variant="primary" type="submit" onClick={handleAddDetailPointsClick} disabled={handleDisableAddButton()}>
-                                    <FaPlus />
+                        {!hasDetailPoints && <Button 
+                            variant="primary" 
+                            type="submit" 
+                            onClick={handleAddDetailPointsClick} 
+                            disabled={handleDisableAddButton()}>
+                            <FaPlus />
                         </Button>}
                     </div>}
-                    {detailPoints.map((item, index) => (
+                    {!isCreatingNewCategory && detailPoints.map((item, index) => (
                         <div className="detailPoints" key={index}>
                             <Form.Group className="show-fields" controlId={`floatingDetail-${index}`}>
                                 <FloatingLabel controlId={`floatingDetail-${index}`} label="Detail">
@@ -564,13 +589,14 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
                                     onClick={() => handleSaveNewUpdateClick(index)}>
                                     {isCreatingNewCategory || (isCreatingNewDetailClicked && index === detailPoints.length - 1) ? "Save New" : "Update"}
                                 </Button>
+                                {!isCreatingNewCategory &&
                                 <Button
                                     variant="primary"
                                     type="submit"
                                     onClick={() => handleDeleteDetailPoint(index)}
                                     disabled={handleDisableDeleteDetailPoint(index)}>
-                                    {"Delete"}
-                                </Button>
+                                    Delete
+                                </Button>}
                                 
                                 {!isCreatingNewCategory && index === detailPoints.length - 1 && 
                                 <Button 
@@ -605,7 +631,7 @@ const ShowCategoriesFields = ({ categoryData, updateCategoryTabsAndData, isCreat
             <SuccessToast
                 show={showSuccessModal}
                 title="Success"
-                body="Detail and points deleted Successfully."
+                body={getSuccessContent("body")}
                 onClose={() => setShowSuccessModal(false)}
             />
 

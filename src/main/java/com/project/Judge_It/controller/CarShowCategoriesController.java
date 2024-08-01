@@ -33,7 +33,7 @@ public class CarShowCategoriesController {
     // Endpoint to get all classifications for a show.
     @GetMapping("/show/{showId}")
     public List<CarShowCategories> getCarShowCategoriesByShowId(@PathVariable Long showId) {
-        return carShowCategoriesRepository.findByShowId(showId);
+        return carShowCategoriesRepository.findByShowIdOrdered(showId);
     }
 
     @SuppressWarnings("null")

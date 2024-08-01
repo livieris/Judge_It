@@ -218,6 +218,7 @@ const ShowCategories = ({ categoryData, selectedShowId, showData, updateCategory
                           handleNavClick={handleNavClick}
                           selectedNavTab={selectedNavTab}
                           dropDownData={categoryData}
+                          selectedShowId={selectedShowId}
                         />
                       </Tab.Pane>
                     ))}
@@ -225,7 +226,7 @@ const ShowCategories = ({ categoryData, selectedShowId, showData, updateCategory
 
                     {/* Show Fields for "Create New Show" Tab */}
                     <Tab.Pane eventKey="createNewCategory">
-                      <ShowCategoriesFields data={null} updateCategoryTabsAndData={updateCategoryTabsAndData} isCreatingNewCategory={isCreatingNewCategory} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab} dropDownData={categoryData}/>
+                      <ShowCategoriesFields data={null} updateCategoryTabsAndData={updateCategoryTabsAndData} isCreatingNewCategory={isCreatingNewCategory} handleNavClick={handleNavClick} selectedNavTab={selectedNavTab} dropDownData={categoryData} selectedShowId={selectedShowId}/>
                     </Tab.Pane>
                   </Tab.Content>
                 </div>
